@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <fstream>
 using namespace std;
  
 struct Customer{
@@ -85,7 +86,7 @@ void payBill(Customer customer[], int &customerCount){
 }
 
 void overDue(Customer customer[], int &customerCount){
-    cout<<"\n === Overdue Customers === \n"
+    cout<<"\n === Overdue Customers === \n";
     for(int i=0; i<customerCount; i++){
         if(customer[i].outstanding_balance>0){
             cout<<"ID: "<< customer[i].id<<"\n";
@@ -113,8 +114,46 @@ void displayCustomer(Customer customer[], int customerCount){
          }
            
          }
-          cout<<"Customer not found!\n";
-            }
+          cout<<"Customer not found!\n";}
+
+void saveToFile(Customer customer[], int &customerCount){
+    ofstream file("customers.txt");
+
+    for(int i=0; i<customerCount; i++){
+        file<<customer[i].name<<"\n";
+        file<<customer[i].id<<"\n";
+        file<<customer[i].address<<"\n";
+        file<<customer[i].meter_no<<"\n";
+        file<<customer[i].used_units<<"\n";
+        file<<customer[i].total_bill<<"\n";
+        file<<customer[i].amount_paid<<"\n";
+        file<<customer[i].outstanding_balance<<"\n";
+    }
+    file.close();
+
+}
+void loadFromFile(Customer customer[], int &customerCount){
+    ifstream file("customers.txt");
+    if(!file) return;  
+    
+    string temp;
+    while(getline(file, customer[customerCount].name)){
+        getline(file, customer[customerCount].id);
+        getline(file, customer[customerCount].address);
+        getline(file, customer[customerCount].meter_no);
+        getline(file, temp);
+        customer[customerCount].used_units = stoi(temp);
+        getline(file, temp);
+        customer[customerCount].total_bill = stod(temp);
+        getline(file, temp);
+        customer[customerCount].amount_paid = stod(temp);
+        getline(file, temp);
+        customer[customerCount].outstanding_balance = stod(temp);
+        customerCount++;
+    }
+    file.close();
+}
+
 
 void showMenu(Customer customer[], int &customerCount)  {
     int choice;
@@ -134,7 +173,7 @@ void showMenu(Customer customer[], int &customerCount)  {
             case 2: displayCustomer(customer, customerCount); break;
             case 3:  calculateBill (customer, customerCount); break;
             case 4:  payBill  (customer, customerCount); break;
-            case 5:  viewOverdue (customer, customerCount); break;
+            case 5:  overDue (customer, customerCount); break;
             case 6: cout << "Goodbye!\n"; return;
             default: cout << "Invalid choice!\n";
         }
@@ -144,6 +183,8 @@ void showMenu(Customer customer[], int &customerCount)  {
 int main(){
      Customer customer[50];
      int customerCount = 0;
-    showMenu(customer, customerCount);
-
+     loadFromFile(customer,customerCount);
+     showMenu(customer, customerCount);
+     saveToFile(customer, customerCount);
+    return 0;
 }
