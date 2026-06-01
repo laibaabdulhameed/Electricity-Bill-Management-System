@@ -6,3 +6,11 @@ M1278
 0
 0
 0
+Ali
+C002
+House2,Street4,Karachi
+MI3875
+230
+2117.7
+0
+2117.7
